@@ -2,6 +2,7 @@ import json
 import requests
 import bs4
 import fake_headers
+import unicodedata
 from pprint import pprint
 
 headers_gen = fake_headers.Headers(browser='chrome', os='win')
@@ -27,8 +28,11 @@ for article_tag in article_full:
     else:
         money = 'Не указана'
 
+    money = unicodedata.normalize('NFKD', money)
+
     parsed_href = requests.get(url=href, headers=headers_gen.generate())
     html_parsed_href = parsed_href.text
+    parsed_href_soup = bs4.BeautifulSoup(html_parsed_href, 'lxml')
 
     if 'Django' or 'Flask' in html_parsed_href:
         parsed_data.append({
